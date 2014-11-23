@@ -1,0 +1,44 @@
+# This is a sample ticker symbol file for sample_point_creator.py
+# Hash marks -- anywhere in the line -- comment the line out
+AAPL
+AIG
+AMZN
+BAC
+C
+CRM
+DATA
+DWRE
+#^DJI
+EBAY
+FB
+FEYE
+GRPN
+HPQ
+IBM
+LNKD
+LOGM
+MKTO
+MSFT
+N
+NOW
+NFLX
+PANW
+SCTY
+SPLK
+SYMC
+TSLA
+TWTR
+WDAY
+WFC
+WFM
+XOM
+Z
+ZEN
+# Yahoo! Finance format:
+YHOO
+^SPXPM
+# Google Finance format:
+GOOG
+NASDAQ:BRCD
+NYSE:JPM
+INDEXNASDAQ:.IXIC
