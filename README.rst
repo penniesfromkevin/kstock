@@ -3,6 +3,10 @@ kstock
 
 **Python module - Retrieve stock data from Google Finance and Yahoo Finance**
 
+This started as a modification of ystockquote by Corey Goldberg, but
+became a full re-write.  Test methodology has been retained for now,
+but that will also change in the future.
+
  * Created by: Kevin (2014)
  * License: MIT
  * Dev Home: `https://github.com/kpwf/kstock <https://github.com/kpwf/kstock>`_
