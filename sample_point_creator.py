@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 """Sample test point creator.
 """
-__copyright__ = 'Copyright (c) 2014 Wavefront Inc.'
+__author__ = 'Kevin (penniesfromkevin at gmail)'
+__copyright__ = 'Copyright (c) 2014, Kevin.'
 __version__ = '0.1.1'
 
 import logging
