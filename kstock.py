@@ -158,6 +158,9 @@ def _request(url):
     except socket.error as err:
         LOGGER.error('_request: socket.error')
         content = ''
+    except urllib2.HTTPError as err:
+        LOGGER.error('_request: HTTPError')
+        content = ''
     LOGGER.debug('_request content: %s', content)
     return content
 
