@@ -14,9 +14,10 @@ import logging
 try:
     # py3
     from urllib.request import Request, urlopen
+    from urllib.error import HTTPError
 except ImportError:
     # py2
-    from urllib2 import Request, urlopen
+    from urllib2 import Request, urlopen, HTTPError
 
 APIS = ('google', 'yahoo')
 DEFAULT_API = APIS[0]
@@ -155,10 +156,7 @@ def _request(url):
         request = Request(url)
         response = urlopen(request)
         content = response.read().decode().strip()
-    except socket.error as err:
-        LOGGER.error('_request: socket.error')
-        content = ''
-    except urllib2.HTTPError as err:
+    except HTTPError as err:
         LOGGER.error('_request: HTTPError')
         content = ''
     LOGGER.debug('_request content: %s', content)
