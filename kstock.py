@@ -157,7 +157,7 @@ def _request(url):
         response = urlopen(request)
         content = response.read().decode().strip()
     except HTTPError as err:
-        LOGGER.error('_request: HTTPError')
+        LOGGER.error('_request: HTTPError %s: %s', err.code, err.reason)
         content = ''
     LOGGER.debug('_request content: %s', content)
     return content
@@ -318,20 +318,20 @@ def _g_get_all(symbols):
     content = _request(url)
     if content.startswith('//'):
         content = content[2:].strip()
-    content = json.loads(content)
-
-    # Reverse the dictionary
-    g_tag_fixed = {}
-    for tag_name, tag_value in G_TAGS.items():
-        g_tag_fixed[tag_value] = tag_name
-
     symbol_dict = {}
-    for symbol_data in content:
-        symbol = symbol_data['t'].strip('^.')
-        symbol_dict[symbol] = {}
-        for tag_name, tag_value in symbol_data.items():
-            if tag_name in g_tag_fixed:
-                symbol_dict[symbol][g_tag_fixed[tag_name]] = tag_value
+    if content:
+        content = json.loads(content)
+        # Reverse the dictionary
+        g_tag_fixed = {}
+        for tag_name, tag_value in G_TAGS.items():
+            g_tag_fixed[tag_value] = tag_name
+
+        for symbol_data in content:
+            symbol = symbol_data['t'].strip('^.')
+            symbol_dict[symbol] = {}
+            for tag_name, tag_value in symbol_data.items():
+                if tag_name in g_tag_fixed:
+                    symbol_dict[symbol][g_tag_fixed[tag_name]] = tag_value
     LOGGER.debug('_g_get_all: %s', repr(symbol_dict))
     return symbol_dict
 

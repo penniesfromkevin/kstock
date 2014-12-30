@@ -109,8 +109,12 @@ def main():
             LOGGER.info('---- %d left to go ----', count)
         else:
             errors += 1
-            LOGGER.error('---- Retrying (%d errors) ----', errors)
-        time.sleep(ARGS.delay)
+            LOGGER.error('---- Errors: %d (%d) ----', errors, ARGS.error_max)
+
+        if errors >= ARGS.error_max:
+            LOGGER.info('Exiting due to maximum errors.')
+        else:
+            time.sleep(ARGS.delay)
 
     return errors
 
