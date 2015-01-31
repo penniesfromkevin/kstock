@@ -33,9 +33,6 @@ def parse_args():
         Parser object with arguments as attributes.
     """
     parser = ArgumentParser(description='Create kstock test points.')
-    parser.add_argument('-a', '--api', default=kstock.DEFAULT_API,
-            choices=kstock.APIS, help='Financial Data API to query.')
-
     parser.add_argument('-f', '--filepath',
             help='Optional path to file containing stock ticker symbols.')
     parser.add_argument('-t', '--tickers',
@@ -88,28 +85,42 @@ def main():
         LOGGER.error('No ticker symbols specified.')
         errors = ARGS.error_max
     else:
-        symbols = kstock.conform_symbols(symbols, ARGS.api)
+        g_symbols = kstock.conform_symbols(symbols, 'google')
+        y_symbols = kstock.conform_symbols(symbols, 'yahoo')
+        symbols = {
+                'google': g_symbols,
+                'google_params': ['last_trade_price', 'after_hours_price'],
+                'yahoo': y_symbols,
+                'yahoo_params': ['revenue', 'short_ratio'],
+                }
         errors = 0
     count = ARGS.count
     while count != 0 and errors < ARGS.error_max:
-        quotes = kstock.get_all(symbols, ARGS.api)
-        if quotes:
-            for symbol in quotes:
-                LOGGER.debug(quotes[symbol])
-                for param in ('last_trade_price', 'after_hours_price'):
-                    if param in quotes[symbol]:
-                        price = quotes[symbol][param].strip()
-                        symbol = symbol.strip('^.')
-                        line = "stock.%s %s host='%s'" % (param, price, symbol)
-                        LOGGER.info(line)
-                        if ARGS.transmit:
-                            transmit_line(ARGS.host, ARGS.port, line)
-            if count > 0:
-                count -= 1
-            LOGGER.info('---- %d left to go ----', count)
-        else:
-            errors += 1
-            LOGGER.error('---- Errors: %d (%d) ----', errors, ARGS.error_max)
+        for api in kstock.APIS:
+            quotes = kstock.get_all(symbols[api], api)
+            if quotes:
+                for symbol in quotes:
+                    LOGGER.debug(quotes[symbol])
+                    for param in symbols['%s_params' % api]:
+                        if param in quotes[symbol]:
+                            price = quotes[symbol][param].strip()
+                            symbol = symbol.strip('^.')
+                            line = "stock.%s %s host='%s'" % (param, price,
+                                    symbol)
+                            LOGGER.info(line)
+                            if ARGS.transmit:
+                                transmit_line(ARGS.host, ARGS.port, line)
+                if count > 0:
+                    count -= 1
+                if errors > 0:
+                    errors -= 1
+                    LOGGER.info('---- Errors decremented: %d (%d) ----',
+                            errors, ARGS.error_max)
+                LOGGER.info('---- %d left to go ----', count)
+            else:
+                errors += 1
+                LOGGER.error('---- Errors: %d (%d) ----', errors,
+                        ARGS.error_max)
 
         if errors >= ARGS.error_max:
             LOGGER.info('Exiting due to maximum errors.')
